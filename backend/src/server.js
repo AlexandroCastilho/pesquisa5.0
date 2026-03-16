@@ -1,12 +1,14 @@
+require("dotenv").config();
+
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
 const { parse } = require("csv-parse/sync");
-const { readDb, withDb, cryptoRandomId } = require("./store");
 const { signToken, requireAuth, requireRole } = require("./auth");
 const { testSmtpConnection, sendMail } = require("./mailer");
+const { query, randomId, initDatabase } = require("./db");
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -15,13 +17,16 @@ const PORT = Number(process.env.PORT || 3000);
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
-function sanitizeUser(user) {
-  const { passwordHash, ...safe } = user;
-  return safe;
-}
-
-function responseCountForSurvey(db, surveyId) {
-  return db.responses.filter((r) => r.surveyId === surveyId).length;
+function sanitizeUserRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: row.role,
+    status: row.status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
 }
 
 function parseCsvEmails(buffer) {
@@ -37,18 +42,132 @@ function parseCsvEmails(buffer) {
   return Array.from(set);
 }
 
+async function getSmtpConfig() {
+  const result = await query("select * from smtp_settings where id = 1");
+  if (result.rows.length === 0) {
+    const now = new Date().toISOString();
+    await query(
+      "insert into smtp_settings (id, host, port, security, username, password, from_email, updated_at) values (1, '', 587, 'tls', '', '', '', $1)",
+      [now]
+    );
+    const next = await query("select * from smtp_settings where id = 1");
+    return next.rows[0];
+  }
+  return result.rows[0];
+}
+
+async function seedIfNeeded() {
+  const users = await query("select count(*)::int as count from users");
+  if (users.rows[0].count > 0) {
+    await getSmtpConfig();
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const adminId = randomId("usr");
+  const surveyId = randomId("srv");
+
+  await query(
+    "insert into users (id, name, email, role, status, password_hash, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8)",
+    [adminId, "Administrador", "admin@pulsecliente.local", "owner", "active", bcrypt.hashSync("admin123", 10), now, now]
+  );
+
+  await query(
+    "insert into surveys (id, title, description, status, questions, created_by, created_at, updated_at, launched_at) values ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9)",
+    [
+      surveyId,
+      "Satisfacao inicial de onboarding",
+      "Pesquisa modelo para validacao do sistema.",
+      "draft",
+      JSON.stringify([
+        {
+          id: randomId("qst"),
+          text: "Como voce avalia sua experiencia inicial?",
+          type: "multiple_choice",
+          required: true,
+          randomizeOptions: false,
+          options: ["Excelente", "Boa", "Regular", "Ruim"]
+        }
+      ]),
+      adminId,
+      now,
+      now,
+      null
+    ]
+  );
+
+  await getSmtpConfig();
+}
+
+async function getSurveyWithCounts({ search = "", status = "", sort = "recent" } = {}) {
+  const conditions = [];
+  const params = [];
+
+  if (search) {
+    params.push(`%${search.toLowerCase()}%`);
+    conditions.push(`lower(s.title) like $${params.length}`);
+  }
+
+  if (status) {
+    params.push(status);
+    conditions.push(`s.status = $${params.length}`);
+  }
+
+  const where = conditions.length ? `where ${conditions.join(" and ")}` : "";
+
+  let orderBy = "s.created_at desc";
+  if (sort === "oldest") orderBy = "s.created_at asc";
+  if (sort === "title") orderBy = "s.title asc";
+
+  const sql = `
+    select
+      s.*,
+      coalesce(r.response_count, 0) as response_count,
+      coalesce(rr.respondent_count, 0) as respondent_count
+    from surveys s
+    left join (
+      select survey_id, count(*)::int as response_count
+      from responses
+      group by survey_id
+    ) r on r.survey_id = s.id
+    left join (
+      select survey_id, count(*)::int as respondent_count
+      from survey_respondents
+      group by survey_id
+    ) rr on rr.survey_id = s.id
+    ${where}
+    order by ${orderBy}
+  `;
+
+  const result = await query(sql, params);
+  return result.rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    status: row.status,
+    questions: row.questions || [],
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    launchedAt: row.launched_at,
+    responseCount: row.response_count,
+    respondentCount: row.respondent_count
+  }));
+}
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });
 
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ message: "Informe e-mail e senha." });
   }
 
-  const db = readDb();
-  const user = db.users.find((u) => u.email.toLowerCase() === String(email).toLowerCase());
+  const userResult = await query("select * from users where lower(email) = lower($1) limit 1", [email]);
+  const user = userResult.rows[0];
+
   if (!user) {
     return res.status(401).json({ message: "Credenciais invalidas." });
   }
@@ -57,325 +176,362 @@ app.post("/api/auth/login", (req, res) => {
     return res.status(403).json({ message: "Usuario inativo." });
   }
 
-  const ok = bcrypt.compareSync(password, user.passwordHash);
+  const ok = bcrypt.compareSync(password, user.password_hash);
   if (!ok) {
     return res.status(401).json({ message: "Credenciais invalidas." });
   }
 
-  const token = signToken({ id: user.id, email: user.email, role: user.role, name: user.name });
-  return res.json({ token, user: sanitizeUser(user) });
+  const safeUser = sanitizeUserRow(user);
+  const token = signToken({ id: safeUser.id, email: safeUser.email, role: safeUser.role, name: safeUser.name });
+  return res.json({ token, user: safeUser });
 });
 
-app.get("/api/auth/me", requireAuth, (req, res) => {
-  const db = readDb();
-  const user = db.users.find((u) => u.id === req.user.id);
+app.get("/api/auth/me", requireAuth, async (req, res) => {
+  const userResult = await query("select * from users where id = $1 limit 1", [req.user.id]);
+  const user = userResult.rows[0];
   if (!user) {
     return res.status(404).json({ message: "Usuario nao encontrado." });
   }
-  return res.json({ user: sanitizeUser(user) });
+  return res.json({ user: sanitizeUserRow(user) });
 });
 
-app.get("/api/dashboard", requireAuth, (req, res) => {
-  const db = readDb();
-  const activeSurveys = db.surveys.filter((s) => s.status === "active").length;
-  const finishedSurveys = db.surveys.filter((s) => s.status === "closed").length;
-  const draftSurveys = db.surveys.filter((s) => s.status === "draft").length;
-  const totalResponses = db.responses.length;
-  const totalInvites = db.surveys.reduce((acc, s) => acc + (s.respondentEmails?.length || 0), 0);
+app.get("/api/dashboard", requireAuth, async (req, res) => {
+  const statsResult = await query(`
+    select
+      count(*) filter (where status = 'active')::int as active_surveys,
+      count(*) filter (where status = 'closed')::int as finished_surveys,
+      count(*) filter (where status = 'draft')::int as draft_surveys
+    from surveys
+  `);
+
+  const totalResponsesResult = await query("select count(*)::int as total_responses from responses");
+  const invitesResult = await query("select count(*)::int as total_invites from survey_respondents");
+
+  const totalResponses = totalResponsesResult.rows[0].total_responses;
+  const totalInvites = invitesResult.rows[0].total_invites;
   const responseRate = totalInvites > 0 ? Number(((totalResponses / totalInvites) * 100).toFixed(1)) : 0;
 
-  const recentSurveys = [...db.surveys]
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-    .slice(0, 5)
-    .map((survey) => ({
-      ...survey,
-      responseCount: responseCountForSurvey(db, survey.id)
-    }));
+  const recentSurveys = await getSurveyWithCounts({ sort: "recent" });
 
   return res.json({
     stats: {
-      activeSurveys,
-      finishedSurveys,
-      draftSurveys,
+      activeSurveys: statsResult.rows[0].active_surveys,
+      finishedSurveys: statsResult.rows[0].finished_surveys,
+      draftSurveys: statsResult.rows[0].draft_surveys,
       responseRate,
       totalResponses
     },
-    recentSurveys
+    recentSurveys: recentSurveys.slice(0, 5)
   });
 });
 
-app.get("/api/users", requireAuth, (req, res) => {
-  const db = readDb();
-  res.json({ users: db.users.map(sanitizeUser) });
+app.get("/api/users", requireAuth, async (req, res) => {
+  const result = await query("select * from users order by created_at desc");
+  res.json({ users: result.rows.map(sanitizeUserRow) });
 });
 
-app.post("/api/users", requireAuth, requireRole(["owner", "admin"]), (req, res) => {
+app.post("/api/users", requireAuth, requireRole(["owner", "admin"]), async (req, res) => {
   const { name, email, role = "member", status = "active", password = "123456" } = req.body || {};
   if (!name || !email) {
     return res.status(400).json({ message: "Nome e e-mail sao obrigatorios." });
   }
 
-  const result = withDb((db) => {
-    const exists = db.users.some((u) => u.email.toLowerCase() === String(email).toLowerCase());
-    if (exists) {
-      return { error: "Ja existe usuario com este e-mail." };
-    }
-
-    const now = new Date().toISOString();
-    const user = {
-      id: cryptoRandomId("usr"),
-      name,
-      email: String(email).toLowerCase(),
-      role,
-      status,
-      passwordHash: bcrypt.hashSync(password, 10),
-      createdAt: now,
-      updatedAt: now
-    };
-
-    db.users.push(user);
-    return { user: sanitizeUser(user) };
-  });
-
-  if (result.error) {
-    return res.status(409).json({ message: result.error });
+  const exists = await query("select id from users where lower(email) = lower($1) limit 1", [email]);
+  if (exists.rows.length > 0) {
+    return res.status(409).json({ message: "Ja existe usuario com este e-mail." });
   }
 
-  return res.status(201).json(result);
+  const now = new Date().toISOString();
+  const id = randomId("usr");
+
+  await query(
+    "insert into users (id, name, email, role, status, password_hash, created_at, updated_at) values ($1,$2,lower($3),$4,$5,$6,$7,$8)",
+    [id, name, email, role, status, bcrypt.hashSync(password, 10), now, now]
+  );
+
+  const created = await query("select * from users where id = $1", [id]);
+  return res.status(201).json({ user: sanitizeUserRow(created.rows[0]) });
 });
 
-app.put("/api/users/:id", requireAuth, requireRole(["owner", "admin"]), (req, res) => {
+app.put("/api/users/:id", requireAuth, requireRole(["owner", "admin"]), async (req, res) => {
   const { id } = req.params;
   const { name, role, status, password } = req.body || {};
 
-  const result = withDb((db) => {
-    const user = db.users.find((u) => u.id === id);
-    if (!user) {
-      return { error: "Usuario nao encontrado." };
-    }
-
-    if (name) user.name = name;
-    if (role) user.role = role;
-    if (status) user.status = status;
-    if (password) user.passwordHash = bcrypt.hashSync(password, 10);
-    user.updatedAt = new Date().toISOString();
-    return { user: sanitizeUser(user) };
-  });
-
-  if (result.error) {
-    return res.status(404).json({ message: result.error });
+  const found = await query("select * from users where id = $1", [id]);
+  const user = found.rows[0];
+  if (!user) {
+    return res.status(404).json({ message: "Usuario nao encontrado." });
   }
 
-  return res.json(result);
+  const nextName = name || user.name;
+  const nextRole = role || user.role;
+  const nextStatus = status || user.status;
+  const nextHash = password ? bcrypt.hashSync(password, 10) : user.password_hash;
+  const now = new Date().toISOString();
+
+  await query(
+    "update users set name=$1, role=$2, status=$3, password_hash=$4, updated_at=$5 where id=$6",
+    [nextName, nextRole, nextStatus, nextHash, now, id]
+  );
+
+  const updated = await query("select * from users where id = $1", [id]);
+  return res.json({ user: sanitizeUserRow(updated.rows[0]) });
 });
 
-app.delete("/api/users/:id", requireAuth, requireRole(["owner"]), (req, res) => {
-  const { id } = req.params;
-  const result = withDb((db) => {
-    const before = db.users.length;
-    db.users = db.users.filter((u) => u.id !== id);
-    if (db.users.length === before) {
-      return { error: "Usuario nao encontrado." };
-    }
-
-    return { ok: true };
-  });
-
-  if (result.error) {
-    return res.status(404).json({ message: result.error });
+app.delete("/api/users/:id", requireAuth, requireRole(["owner"]), async (req, res) => {
+  const deleted = await query("delete from users where id = $1 returning id", [req.params.id]);
+  if (deleted.rows.length === 0) {
+    return res.status(404).json({ message: "Usuario nao encontrado." });
   }
-
-  return res.json(result);
+  return res.json({ ok: true });
 });
 
-app.get("/api/smtp", requireAuth, requireRole(["owner", "admin"]), (req, res) => {
-  const db = readDb();
-  const { password, ...safeConfig } = db.smtp;
-  res.json({ smtp: safeConfig, hasPassword: Boolean(password) });
+app.get("/api/smtp", requireAuth, requireRole(["owner", "admin"]), async (req, res) => {
+  const smtp = await getSmtpConfig();
+  const safeConfig = {
+    host: smtp.host,
+    port: smtp.port,
+    security: smtp.security,
+    username: smtp.username,
+    fromEmail: smtp.from_email,
+    updatedAt: smtp.updated_at
+  };
+  res.json({ smtp: safeConfig, hasPassword: Boolean(smtp.password) });
 });
 
-app.put("/api/smtp", requireAuth, requireRole(["owner", "admin"]), (req, res) => {
+app.put("/api/smtp", requireAuth, requireRole(["owner", "admin"]), async (req, res) => {
   const { host, port, security, username, password, fromEmail } = req.body || {};
+  const smtp = await getSmtpConfig();
 
-  const smtp = withDb((db) => {
-    db.smtp.host = host || db.smtp.host;
-    db.smtp.port = Number(port || db.smtp.port || 587);
-    db.smtp.security = security || db.smtp.security || "tls";
-    db.smtp.username = username || db.smtp.username;
-    if (password) {
-      db.smtp.password = password;
-    }
-    db.smtp.fromEmail = fromEmail || db.smtp.fromEmail;
-    db.smtp.updatedAt = new Date().toISOString();
-    return db.smtp;
+  const next = {
+    host: host ?? smtp.host,
+    port: Number(port ?? smtp.port ?? 587),
+    security: security ?? smtp.security,
+    username: username ?? smtp.username,
+    password: password || smtp.password,
+    from_email: fromEmail ?? smtp.from_email,
+    updated_at: new Date().toISOString()
+  };
+
+  await query(
+    "update smtp_settings set host=$1, port=$2, security=$3, username=$4, password=$5, from_email=$6, updated_at=$7 where id=1",
+    [next.host, next.port, next.security, next.username, next.password, next.from_email, next.updated_at]
+  );
+
+  res.json({
+    smtp: {
+      host: next.host,
+      port: next.port,
+      security: next.security,
+      username: next.username,
+      fromEmail: next.from_email,
+      updatedAt: next.updated_at
+    },
+    hasPassword: Boolean(next.password)
   });
-
-  const { password: pw, ...safeConfig } = smtp;
-  return res.json({ smtp: safeConfig, hasPassword: Boolean(pw) });
 });
 
 app.post("/api/smtp/test", requireAuth, requireRole(["owner", "admin"]), async (req, res) => {
   try {
-    const db = readDb();
-    await testSmtpConnection(db.smtp);
+    const smtp = await getSmtpConfig();
+    await testSmtpConnection({
+      host: smtp.host,
+      port: smtp.port,
+      security: smtp.security,
+      username: smtp.username,
+      password: smtp.password,
+      fromEmail: smtp.from_email
+    });
     return res.json({ ok: true, message: "Conexao SMTP validada com sucesso." });
   } catch (err) {
     return res.status(400).json({ ok: false, message: err.message });
   }
 });
 
-app.get("/api/surveys", requireAuth, (req, res) => {
+app.get("/api/surveys", requireAuth, async (req, res) => {
   const { search = "", status = "", sort = "recent" } = req.query;
-  const db = readDb();
-
-  let items = db.surveys.filter((survey) => {
-    if (status && survey.status !== status) {
-      return false;
-    }
-    if (search && !survey.title.toLowerCase().includes(String(search).toLowerCase())) {
-      return false;
-    }
-    return true;
-  });
-
-  items.sort((a, b) => {
-    if (sort === "oldest") return new Date(a.createdAt) - new Date(b.createdAt);
-    if (sort === "title") return a.title.localeCompare(b.title);
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
-
-  const surveys = items.map((survey) => ({
-    ...survey,
-    responseCount: responseCountForSurvey(db, survey.id)
-  }));
-
+  const surveys = await getSurveyWithCounts({ search: String(search), status: String(status), sort: String(sort) });
   return res.json({ surveys });
 });
 
-app.post("/api/surveys", requireAuth, (req, res) => {
+app.post("/api/surveys", requireAuth, async (req, res) => {
   const { title, description = "", questions = [] } = req.body || {};
   if (!title) {
     return res.status(400).json({ message: "Titulo da pesquisa e obrigatorio." });
   }
 
-  const survey = withDb((db) => {
-    const now = new Date().toISOString();
-    const newSurvey = {
-      id: cryptoRandomId("srv"),
-      title,
-      description,
-      status: "draft",
-      questions,
-      respondentEmails: [],
-      createdBy: req.user.id,
-      createdAt: now,
-      updatedAt: now,
-      launchedAt: null
-    };
-    db.surveys.push(newSurvey);
-    return newSurvey;
-  });
+  const now = new Date().toISOString();
+  const id = randomId("srv");
 
-  return res.status(201).json({ survey });
+  await query(
+    "insert into surveys (id, title, description, status, questions, created_by, created_at, updated_at, launched_at) values ($1,$2,$3,'draft',$4::jsonb,$5,$6,$7,$8)",
+    [id, title, description, JSON.stringify(questions), req.user.id, now, now, null]
+  );
+
+  const created = await query("select * from surveys where id = $1", [id]);
+  const row = created.rows[0];
+
+  return res.status(201).json({
+    survey: {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      status: row.status,
+      questions: row.questions,
+      respondentEmails: [],
+      createdBy: row.created_by,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      launchedAt: row.launched_at
+    }
+  });
 });
 
-app.get("/api/surveys/:id", requireAuth, (req, res) => {
-  const db = readDb();
-  const survey = db.surveys.find((s) => s.id === req.params.id);
+app.get("/api/surveys/:id", requireAuth, async (req, res) => {
+  const surveyResult = await query("select * from surveys where id = $1", [req.params.id]);
+  const survey = surveyResult.rows[0];
   if (!survey) {
     return res.status(404).json({ message: "Pesquisa nao encontrada." });
   }
 
-  const responses = db.responses.filter((r) => r.surveyId === survey.id);
-  return res.json({ survey, responses });
+  const respondentsResult = await query("select email from survey_respondents where survey_id = $1 order by email", [req.params.id]);
+  const responsesResult = await query("select * from responses where survey_id = $1 order by submitted_at desc", [req.params.id]);
+
+  return res.json({
+    survey: {
+      id: survey.id,
+      title: survey.title,
+      description: survey.description,
+      status: survey.status,
+      questions: survey.questions || [],
+      respondentEmails: respondentsResult.rows.map((r) => r.email),
+      createdBy: survey.created_by,
+      createdAt: survey.created_at,
+      updatedAt: survey.updated_at,
+      launchedAt: survey.launched_at
+    },
+    responses: responsesResult.rows.map((row) => ({
+      id: row.id,
+      surveyId: row.survey_id,
+      respondentEmail: row.respondent_email,
+      answers: row.answers,
+      submittedAt: row.submitted_at
+    }))
+  });
 });
 
-app.put("/api/surveys/:id", requireAuth, (req, res) => {
+app.put("/api/surveys/:id", requireAuth, async (req, res) => {
   const payload = req.body || {};
-  const result = withDb((db) => {
-    const survey = db.surveys.find((s) => s.id === req.params.id);
-    if (!survey) {
-      return { error: "Pesquisa nao encontrada." };
-    }
-
-    const editable = ["title", "description", "status", "questions", "respondentEmails"];
-    for (const key of editable) {
-      if (payload[key] !== undefined) {
-        survey[key] = payload[key];
-      }
-    }
-    survey.updatedAt = new Date().toISOString();
-    return { survey };
-  });
-
-  if (result.error) {
-    return res.status(404).json({ message: result.error });
+  const surveyResult = await query("select * from surveys where id = $1", [req.params.id]);
+  const survey = surveyResult.rows[0];
+  if (!survey) {
+    return res.status(404).json({ message: "Pesquisa nao encontrada." });
   }
 
-  return res.json(result);
-});
+  const next = {
+    title: payload.title ?? survey.title,
+    description: payload.description ?? survey.description,
+    status: payload.status ?? survey.status,
+    questions: payload.questions ?? survey.questions,
+    updatedAt: new Date().toISOString()
+  };
 
-app.delete("/api/surveys/:id", requireAuth, (req, res) => {
-  const result = withDb((db) => {
-    const before = db.surveys.length;
-    db.surveys = db.surveys.filter((s) => s.id !== req.params.id);
-    db.responses = db.responses.filter((r) => r.surveyId !== req.params.id);
-    if (before === db.surveys.length) {
-      return { error: "Pesquisa nao encontrada." };
+  await query(
+    "update surveys set title=$1, description=$2, status=$3, questions=$4::jsonb, updated_at=$5 where id=$6",
+    [next.title, next.description, next.status, JSON.stringify(next.questions || []), next.updatedAt, req.params.id]
+  );
+
+  if (payload.respondentEmails !== undefined && Array.isArray(payload.respondentEmails)) {
+    await query("delete from survey_respondents where survey_id = $1", [req.params.id]);
+    for (const email of payload.respondentEmails.map((x) => String(x).trim().toLowerCase()).filter(Boolean)) {
+      await query(
+        "insert into survey_respondents (survey_id, email, created_at) values ($1,$2,$3) on conflict (survey_id, email) do nothing",
+        [req.params.id, email, new Date().toISOString()]
+      );
     }
-    return { ok: true };
-  });
-
-  if (result.error) {
-    return res.status(404).json({ message: result.error });
   }
 
-  return res.json(result);
+  const updatedSurvey = await query("select * from surveys where id = $1", [req.params.id]);
+  const respondentsResult = await query("select email from survey_respondents where survey_id = $1 order by email", [req.params.id]);
+
+  return res.json({
+    survey: {
+      id: updatedSurvey.rows[0].id,
+      title: updatedSurvey.rows[0].title,
+      description: updatedSurvey.rows[0].description,
+      status: updatedSurvey.rows[0].status,
+      questions: updatedSurvey.rows[0].questions,
+      respondentEmails: respondentsResult.rows.map((r) => r.email),
+      createdBy: updatedSurvey.rows[0].created_by,
+      createdAt: updatedSurvey.rows[0].created_at,
+      updatedAt: updatedSurvey.rows[0].updated_at,
+      launchedAt: updatedSurvey.rows[0].launched_at
+    }
+  });
 });
 
-app.post("/api/surveys/:id/respondents/import", requireAuth, upload.single("file"), (req, res) => {
+app.delete("/api/surveys/:id", requireAuth, async (req, res) => {
+  const deleted = await query("delete from surveys where id = $1 returning id", [req.params.id]);
+  if (deleted.rows.length === 0) {
+    return res.status(404).json({ message: "Pesquisa nao encontrada." });
+  }
+  return res.json({ ok: true });
+});
+
+app.post("/api/surveys/:id/respondents/import", requireAuth, upload.single("file"), async (req, res) => {
   const fromBody = Array.isArray(req.body?.emails) ? req.body.emails : [];
   const fromText = typeof req.body?.emails === "string" ? req.body.emails.split(/[\n,;]+/) : [];
   const fromCsv = req.file ? parseCsvEmails(req.file.buffer) : [];
   const merged = new Set([...fromBody, ...fromText, ...fromCsv].map((e) => String(e).trim().toLowerCase()).filter(Boolean));
 
-  const result = withDb((db) => {
-    const survey = db.surveys.find((s) => s.id === req.params.id);
-    if (!survey) {
-      return { error: "Pesquisa nao encontrada." };
-    }
-
-    const existing = new Set((survey.respondentEmails || []).map((e) => e.toLowerCase()));
-    let added = 0;
-    for (const email of merged) {
-      if (!existing.has(email)) {
-        existing.add(email);
-        added += 1;
-      }
-    }
-    survey.respondentEmails = Array.from(existing);
-    survey.updatedAt = new Date().toISOString();
-    return { added, total: survey.respondentEmails.length, respondentEmails: survey.respondentEmails };
-  });
-
-  if (result.error) {
-    return res.status(404).json({ message: result.error });
+  const surveyExists = await query("select id from surveys where id = $1", [req.params.id]);
+  if (surveyExists.rows.length === 0) {
+    return res.status(404).json({ message: "Pesquisa nao encontrada." });
   }
 
-  return res.json(result);
+  let added = 0;
+  for (const email of merged) {
+    const inserted = await query(
+      "insert into survey_respondents (survey_id, email, created_at) values ($1,$2,$3) on conflict (survey_id, email) do nothing returning email",
+      [req.params.id, email, new Date().toISOString()]
+    );
+    if (inserted.rows.length > 0) {
+      added += 1;
+    }
+  }
+
+  await query("update surveys set updated_at = $1 where id = $2", [new Date().toISOString(), req.params.id]);
+  const respondentsResult = await query("select email from survey_respondents where survey_id = $1 order by email", [req.params.id]);
+
+  return res.json({
+    added,
+    total: respondentsResult.rows.length,
+    respondentEmails: respondentsResult.rows.map((r) => r.email)
+  });
 });
 
 app.post("/api/surveys/:id/launch", requireAuth, async (req, res) => {
-  const db = readDb();
-  const survey = db.surveys.find((s) => s.id === req.params.id);
+  const surveyResult = await query("select * from surveys where id = $1", [req.params.id]);
+  const survey = surveyResult.rows[0];
   if (!survey) {
     return res.status(404).json({ message: "Pesquisa nao encontrada." });
   }
 
-  const emails = survey.respondentEmails || [];
+  const respondentsResult = await query("select email from survey_respondents where survey_id = $1", [req.params.id]);
+  const emails = respondentsResult.rows.map((row) => row.email);
   if (emails.length === 0) {
     return res.status(400).json({ message: "Nenhum e-mail importado para disparo." });
   }
+
+  const smtp = await getSmtpConfig();
+  const smtpConfig = {
+    host: smtp.host,
+    port: smtp.port,
+    security: smtp.security,
+    username: smtp.username,
+    password: smtp.password,
+    fromEmail: smtp.from_email
+  };
 
   const subject = `Convite para pesquisa: ${survey.title}`;
   const html = `
@@ -389,84 +545,103 @@ app.post("/api/surveys/:id/launch", requireAuth, async (req, res) => {
 
   for (const to of emails) {
     try {
-      await sendMail(db.smtp, { to, subject, html });
+      await sendMail(smtpConfig, { to, subject, html });
       sent += 1;
     } catch (err) {
       failed += 1;
     }
   }
 
-  withDb((mutableDb) => {
-    const mutableSurvey = mutableDb.surveys.find((s) => s.id === req.params.id);
-    if (mutableSurvey) {
-      mutableSurvey.status = "active";
-      mutableSurvey.launchedAt = new Date().toISOString();
-      mutableSurvey.updatedAt = new Date().toISOString();
-    }
-
-    mutableDb.emailLogs.push({
-      id: cryptoRandomId("eml"),
-      surveyId: req.params.id,
-      sent,
-      failed,
-      createdAt: new Date().toISOString()
-    });
-  });
+  const now = new Date().toISOString();
+  await query("update surveys set status = 'active', launched_at = $1, updated_at = $1 where id = $2", [now, req.params.id]);
+  await query("insert into email_logs (id, survey_id, sent, failed, created_at) values ($1,$2,$3,$4,$5)", [
+    randomId("eml"),
+    req.params.id,
+    sent,
+    failed,
+    now
+  ]);
 
   return res.json({ ok: true, sent, failed, total: emails.length });
 });
 
-app.get("/api/surveys/:id/responses", requireAuth, (req, res) => {
-  const db = readDb();
-  const survey = db.surveys.find((s) => s.id === req.params.id);
-  if (!survey) {
+app.get("/api/surveys/:id/responses", requireAuth, async (req, res) => {
+  const survey = await query("select id from surveys where id = $1", [req.params.id]);
+  if (survey.rows.length === 0) {
     return res.status(404).json({ message: "Pesquisa nao encontrada." });
   }
 
-  const responses = db.responses.filter((r) => r.surveyId === req.params.id);
-  return res.json({ responses, total: responses.length });
+  const responses = await query("select * from responses where survey_id = $1 order by submitted_at desc", [req.params.id]);
+
+  return res.json({
+    responses: responses.rows.map((row) => ({
+      id: row.id,
+      surveyId: row.survey_id,
+      respondentEmail: row.respondent_email,
+      answers: row.answers,
+      submittedAt: row.submitted_at
+    })),
+    total: responses.rows.length
+  });
 });
 
-app.post("/api/public/surveys/:id/responses", (req, res) => {
+app.post("/api/public/surveys/:id/responses", async (req, res) => {
   const { respondentEmail, answers } = req.body || {};
   if (!respondentEmail || !answers || typeof answers !== "object") {
     return res.status(400).json({ message: "Dados de resposta invalidos." });
   }
 
-  const result = withDb((db) => {
-    const survey = db.surveys.find((s) => s.id === req.params.id);
-    if (!survey) {
-      return { error: "Pesquisa nao encontrada." };
-    }
-    if (survey.status !== "active") {
-      return { error: "Pesquisa nao esta ativa para respostas." };
-    }
-
-    const response = {
-      id: cryptoRandomId("rsp"),
-      surveyId: survey.id,
-      respondentEmail: String(respondentEmail).toLowerCase(),
-      answers,
-      submittedAt: new Date().toISOString()
-    };
-    db.responses.push(response);
-    survey.updatedAt = new Date().toISOString();
-    return { response };
-  });
-
-  if (result.error) {
-    return res.status(400).json({ message: result.error });
+  const surveyResult = await query("select * from surveys where id = $1", [req.params.id]);
+  const survey = surveyResult.rows[0];
+  if (!survey) {
+    return res.status(404).json({ message: "Pesquisa nao encontrada." });
+  }
+  if (survey.status !== "active") {
+    return res.status(400).json({ message: "Pesquisa nao esta ativa para respostas." });
   }
 
-  return res.status(201).json(result);
+  const response = {
+    id: randomId("rsp"),
+    surveyId: survey.id,
+    respondentEmail: String(respondentEmail).toLowerCase(),
+    answers,
+    submittedAt: new Date().toISOString()
+  };
+
+  await query(
+    "insert into responses (id, survey_id, respondent_email, answers, submitted_at) values ($1,$2,$3,$4::jsonb,$5)",
+    [response.id, response.surveyId, response.respondentEmail, JSON.stringify(response.answers), response.submittedAt]
+  );
+
+  await query("update surveys set updated_at = $1 where id = $2", [new Date().toISOString(), survey.id]);
+
+  return res.status(201).json({ response });
 });
 
 const siteDir = path.join(__dirname, "..", "..", "site");
 app.use("/site", express.static(siteDir));
 app.get("/", (req, res) => {
-  res.redirect("/site/index.html");
+  res.redirect("/site/pages/desktop/login.html");
 });
 
-app.listen(PORT, () => {
-  console.log(`PulseCliente backend iniciado em http://localhost:${PORT}`);
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Erro interno no servidor." });
+});
+
+async function bootstrap() {
+  await initDatabase();
+  await seedIfNeeded();
+
+  app.listen(PORT, () => {
+    console.log(`PulseCliente backend SQL iniciado em http://localhost:${PORT}`);
+  });
+}
+
+bootstrap().catch((err) => {
+  if (err && err.code === "ENETUNREACH") {
+    console.error("Falha de rede ao conectar no Postgres. Se estiver usando Supabase, utilize a DATABASE_URL do Session pooler (porta 6543), que costuma funcionar em ambientes sem IPv6.");
+  }
+  console.error("Falha ao iniciar backend:", err);
+  process.exit(1);
 });

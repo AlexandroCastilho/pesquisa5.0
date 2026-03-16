@@ -1,5 +1,45 @@
 (function () {
-  var API_BASE = window.PC_API_BASE || localStorage.getItem("pc_api_base") || "http://localhost:3000/api";
+  function isLocalHost(hostname) {
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  }
+
+  function getDefaultApiBase() {
+    var origin = window.location.origin;
+    var hostname = window.location.hostname;
+    var port = window.location.port;
+
+    if (!isLocalHost(hostname)) {
+      return origin + "/api";
+    }
+
+    if (port === "3000") {
+      return origin + "/api";
+    }
+
+    return window.location.protocol + "//" + hostname + ":3000/api";
+  }
+
+  function getApiBase() {
+    var explicitBase = window.PC_API_BASE;
+    if (explicitBase) {
+      return explicitBase;
+    }
+
+    var storedBase = localStorage.getItem("pc_api_base");
+    var runningRemotely = !isLocalHost(window.location.hostname);
+
+    if (storedBase) {
+      var storedLooksLocal = storedBase.indexOf("http://localhost:") === 0 || storedBase.indexOf("http://127.0.0.1:") === 0;
+      if (!(runningRemotely && storedLooksLocal)) {
+        return storedBase;
+      }
+      localStorage.removeItem("pc_api_base");
+    }
+
+    return getDefaultApiBase();
+  }
+
+  var API_BASE = getApiBase();
 
   function getToken() {
     return localStorage.getItem("pc_token");

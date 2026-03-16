@@ -4,7 +4,6 @@ Site completo baseado nos layouts da pasta Stitch, implementado por etapas.
 
 ## Estrutura
 
-- `site/index.html`: pagina inicial com navegação por etapas
 - `site/pages/desktop/`: fluxo desktop
 - `site/pages/mobile/`: fluxo mobile (PWA)
 
@@ -27,13 +26,40 @@ python3 -m http.server 8000
 
 Depois abra no navegador:
 
-- `http://localhost:8000/site/index.html`
+- `http://localhost:8000/site/pages/desktop/login.html`
 
-## Backend (API funcional)
+## Backend (API funcional + SQL Supabase)
 
-Foi adicionada uma API em Node.js com autenticação, pesquisas, respostas, SMTP e usuários.
+Foi adicionada uma API em Node.js com autenticação, pesquisas, respostas, SMTP e usuários usando PostgreSQL (Supabase).
+
+### Configurar Supabase
+
+1. Crie um projeto no Supabase.
+2. Copie a string de conexão Postgres (`DATABASE_URL`) no painel do projeto.
+3. No backend, copie o arquivo de exemplo e preencha:
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Edite `.env`:
+
+- `DATABASE_URL=...`
+- `DB_SSL=true`
+- `JWT_SECRET=...`
+
+Observacao importante sobre Supabase:
+
+- Em ambientes como Codespaces/devcontainer, prefira a string do **Session pooler** (porta `6543`) em vez da conexao direta `db.<project-ref>.supabase.co:5432`, pois a direta pode exigir rota IPv6 e gerar `ENETUNREACH`.
+
+4. Execute o SQL base no Supabase SQL Editor:
+
+Arquivo: `backend/sql/schema.sql`
 
 ### Iniciar API
+
+Importante: rode os comandos npm apenas em `backend/` (a pasta `site/` nao e um projeto npm).
 
 ```bash
 cd backend
@@ -49,6 +75,8 @@ API disponível em:
 
 - E-mail: `admin@pulsecliente.local`
 - Senha: `admin123`
+
+Se não houver usuários, o backend cria automaticamente este admin no primeiro start.
 
 ### Telas funcionais (desktop)
 

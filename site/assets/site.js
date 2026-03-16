@@ -1,4 +1,16 @@
 (function () {
+  var host = window.location.hostname;
+  var port = window.location.port;
+  var path = window.location.pathname;
+  var isLocalHost = host === 'localhost' || host === '127.0.0.1';
+  var isAppPath = path.indexOf('/pages/desktop/') !== -1 || path.indexOf('/site/pages/desktop/') !== -1;
+
+  if (isLocalHost && port && port !== '3000' && isAppPath) {
+    var normalizedPath = path.indexOf('/site/') === 0 ? path : '/site' + path;
+    window.location.replace(window.location.protocol + '//' + host + ':3000' + normalizedPath + window.location.search + window.location.hash);
+    return;
+  }
+
   var isDesktop = window.location.pathname.indexOf('/desktop/') !== -1;
   var isMobile = window.location.pathname.indexOf('/mobile/') !== -1;
   var token = localStorage.getItem('pc_token');
@@ -32,11 +44,12 @@
     return a;
   }
 
-  shell.appendChild(makeLink('Inicio', isDesktop ? '../../index.html' : '../../index.html', false));
+  var homeHref = isDesktop ? (token ? 'dashboard.html' : 'login.html') : '../desktop/login.html';
+
+  shell.appendChild(makeLink('Inicio', homeHref, false));
 
   if (isDesktop) {
     if (pageName === 'login.html') {
-      shell.appendChild(makeLink('Inicio', '../../index.html', false));
       document.body.prepend(shell);
       return;
     }
