@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+<script src="../../assets/app-api.js" defer></script>
+<script src="../../assets/dashboard.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 h-screen flex overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-background-dark flex-shrink-0">
+<div class="flex items-center gap-3 px-6 py-5">
+<div class="size-9 flex items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h1 class="text-base font-bold leading-none">PulseCliente</h1>
+</div>
+<nav class="flex-1 px-4 py-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="pesquisas.html">
+<span class="material-symbols-outlined">poll</span>
+<span class="text-sm font-medium">Pesquisas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="editor-perguntas.html">
+<span class="material-symbols-outlined">edit_document</span>
+<span class="text-sm font-medium">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="usuarios.html">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Público</span>
+</a>
+<div class="flex-1"></div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="smtp.html">
+<span class="material-symbols-outlined">settings_ethernet</span>
+<span class="text-sm font-medium">Configurações SMTP</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-primary/20 bg-white/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-40 px-8 flex items-center justify-between">
+<div class="w-full max-w-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 dark:bg-primary/5 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Buscar pesquisas, respostas..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-primary/20 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-semibold">Alex Rivera</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Administrador</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-primary/20 overflow-hidden border border-slate-300 dark:border-primary/30">
+<img class="w-full h-full object-cover" data-alt="User avatar of Alex Rivera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpVS5pl7xkvLw2a99CQbraqOnMTlfbQ0WxjFeiIjfTOeJxJbjyFsA9YvBFmGyEiIDS55fFdP-Bj8MLfgjtrGgEV_LDFxihGZKOXNx57LBi_HGGT8ueLNOW8wx44lh5TASFMhaFT8AOtdd-hFGa22o60YgDKbgoSJMCB7FXWlCppWpgKFrh0Y0WtxNPLO9-aMrHaRk2gKn1r7zUgDnYXluupKZlkEHazC9KauiyjuueHK6VDFIAlXZCgiSkJtQKSZ_KgZ4nCcy1c7pG"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 space-y-8">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-bold tracking-tight">Visão Geral do Dashboard</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Monitore o desempenho das suas pesquisas e níveis de engajamento.</p>
+</div>
+<a href="editor-perguntas.html" class="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Nova Pesquisa</span>
+</a>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+<span class="material-symbols-outlined">play_circle</span>
+</div>
+<span class="text-xs font-bold text-green-500 flex items-center bg-green-500/10 px-2 py-1 rounded-full">+12% <span class="material-symbols-outlined text-xs ml-0.5">trending_up</span></span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Pesquisas Ativas</p>
+<h3 class="text-2xl font-bold mt-1">12</h3>
+</div>
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<span class="text-xs font-bold text-green-500 flex items-center bg-green-500/10 px-2 py-1 rounded-full">+5.2% <span class="material-symbols-outlined text-xs ml-0.5">trending_up</span></span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Pesquisas Finalizadas</p>
+<h3 class="text-2xl font-bold mt-1">48</h3>
+</div>
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-xs font-bold text-red-500 flex items-center bg-red-500/10 px-2 py-1 rounded-full">-2% <span class="material-symbols-outlined text-xs ml-0.5">trending_down</span></span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Para Finalizar</p>
+<h3 class="text-2xl font-bold mt-1">5</h3>
+</div>
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">query_stats</span>
+</div>
+<span class="text-xs font-bold text-green-500 flex items-center bg-green-500/10 px-2 py-1 rounded-full">+0.5% <span class="material-symbols-outlined text-xs ml-0.5">trending_up</span></span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Taxa de Resposta</p>
+<h3 class="text-2xl font-bold mt-1">84.2%</h3>
+</div>
+</div>
+<!-- Charts and Quick Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Response Trend Placeholder -->
+<div class="lg:col-span-2 bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-xl p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-lg">Tendência de Respostas</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-xs font-medium rounded-md bg-slate-100 dark:bg-primary/10">7D</button>
+<button class="px-3 py-1 text-xs font-medium rounded-md text-slate-500">1M</button>
+<button class="px-3 py-1 text-xs font-medium rounded-md text-slate-500">3M</button>
+</div>
+</div>
+<div class="h-[280px] w-full flex items-end justify-between gap-2 px-2 relative">
+<!-- Simulated Chart Bars -->
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[40%]" title="Seg: 120">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[70%] transition-all group-hover:h-[85%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[60%]" title="Ter: 180">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[50%] transition-all group-hover:h-[65%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[85%]" title="Qua: 245">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[80%] transition-all group-hover:h-[95%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[55%]" title="Qui: 165">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[60%] transition-all group-hover:h-[75%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[70%]" title="Sex: 210">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[90%] transition-all group-hover:h-[100%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[45%]" title="Sáb: 135">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[40%] transition-all group-hover:h-[55%]"></div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-t-md relative group h-[30%]" title="Dom: 90">
+<div class="absolute bottom-0 w-full bg-primary rounded-t-md h-[55%] transition-all group-hover:h-[70%]"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 px-2 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+<span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-xl p-6 flex flex-col">
+<h3 class="font-bold text-lg mb-4">Ações Rápidas</h3>
+<div class="space-y-3 flex-1">
+<button class="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-primary/10 hover:border-primary/40 dark:hover:border-primary/40 transition-colors bg-slate-50 dark:bg-primary/5 text-left group">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">add_task</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Criar Nova Pesquisa</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Comece com um modelo ou do zero</p>
+</div>
+</button>
+<button class="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-primary/10 hover:border-primary/40 dark:hover:border-primary/40 transition-colors bg-slate-50 dark:bg-primary/5 text-left group">
+<div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Enviar Convites</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Alcance seu segmento de público</p>
+</div>
+</button>
+<button class="w-full flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-primary/10 hover:border-primary/40 dark:hover:border-primary/40 transition-colors bg-slate-50 dark:bg-primary/5 text-left group">
+<div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">download</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Exportar Relatório</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Baixe dados em PDF, CSV ou Excel</p>
+</div>
+</button>
+</div>
+<div class="mt-6 pt-6 border-t border-slate-100 dark:border-primary/10">
+<div class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+<span class="material-symbols-outlined text-[14px]">history</span>
+                        Atividade Recente
+                    </div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<p class="text-xs"><span class="font-semibold">Alex</span> atualizou "Feedback de Produto"</p>
+<span class="text-[10px] text-slate-500 ml-auto">2m atrás</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<p class="text-xs"><span class="font-semibold">SurveyBot</span> 12 novas respostas</p>
+<span class="text-[10px] text-slate-500 ml-auto">1h atrás</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Surveys Table -->
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 border-b border-slate-200 dark:border-primary/20 flex justify-between items-center">
+<h3 class="font-bold text-lg">Pesquisas Recentes</h3>
+<a class="text-primary text-sm font-semibold hover:underline" href="#">Ver Todas</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-primary/10 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
+<th class="px-6 py-4">Nome da Pesquisa</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Respostas</th>
+<th class="px-6 py-4 text-right">Última Atividade</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-primary/10">
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">poll</span>
+</div>
+<span class="font-medium">Satisfação do Cliente Q3</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-green-500/10 text-green-500 border border-green-500/20">Ativa</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-background-dark bg-slate-300 overflow-hidden"><img data-alt="Avatar 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7eiZjvAnK38Jg5vkfqpCdJ5P2dXxyvyyNhEpEnd_-g9eW2NP30zkmMrf7ZYB-Vc_53vAMc_iRudVdHrxbypRQavP3F_LgpPnNqHhzK3dS4SrDXUO14vERQRLtu1M9oX1ducx_XuBJbUBjpQkfm3naKJXiS-xdSNzT14MClYWU98UDL93-DNLg3P-zhhrI3_qL9NugO8MPY0Amrxd7kD53d18jnCdvHH9Prk7x2j-hcVNKk-6SyGuHint_1exvB8vqjj1wnEr_W7wH"/></div>
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-background-dark bg-slate-400 overflow-hidden"><img data-alt="Avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBswvo9tGcp4JV1MQ6mNkgh_4ZwHpxbQptvX1i_P3lkWlas0OiE2qmQkkuwDwjxYn2OI3bqmmKXC6cwy5zhbaVq0d2VIgK0QFzbJmk67_R4Pd5bmccS86ZMzsYlYrrfiTkRtN210JNCX4Tvxa1PZQMZlbBYnSR1DTwF9BXKdETagTgSeVyU-CoBMmWjPlbGuySOGIvL3fkn3F28tGIQCsZPMSpL2s6hD21AI-DOHXcwHSD5RQm_P59Lltcac9w9eUDmeP7VQq5RS9qR"/></div>
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-background-dark bg-primary flex items-center justify-center text-[8px] text-white">+1k</div>
+</div>
+<span class="text-xs text-slate-500">1.248 total</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500">24 Out, 2023</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-100 dark:bg-primary/10 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-sm">poll</span>
+</div>
+<span class="font-medium">Engajamento de Funcionários 2024</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">Rascunho</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs text-slate-500">Não iniciada</span>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500">20 Out, 2023</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-100 dark:bg-primary/10 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-sm">poll</span>
+</div>
+<span class="font-medium">Pesquisa de UX do Website</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/10 text-red-500 border border-red-500/20">Encerrada</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs text-slate-500">452 total</span>
+</td>
+<td class="px-6 py-4 text-right text-sm text-slate-500">15 Out, 2023</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</body></html>

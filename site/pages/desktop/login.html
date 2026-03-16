@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCliente - Login</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#5048e5",
+            "background-light": "#f6f6f8",
+            "background-dark": "#121121"
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="../../assets/site.css" />
+  <script src="../../assets/site.js" defer></script>
+  <script src="../../assets/app-api.js" defer></script>
+  <script src="../../assets/login.js" defer></script>
+</head>
+<body class="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+  <main class="min-h-screen grid lg:grid-cols-2">
+    <section class="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-primary to-indigo-900 text-white">
+      <div class="flex items-center gap-3">
+        <div class="size-10 rounded-lg bg-white/20 flex items-center justify-center">
+          <span class="material-symbols-outlined">analytics</span>
+        </div>
+        <h1 class="text-xl font-bold">PulseCliente</h1>
+      </div>
+      <div>
+        <p class="inline-flex rounded-full border border-white/30 px-3 py-1 text-xs font-semibold">Plataforma de Pesquisa</p>
+        <h2 class="mt-4 text-4xl font-black leading-tight">Gestao completa de pesquisas e respostas em um unico painel.</h2>
+        <p class="mt-4 text-white/80 max-w-lg">Acesse para criar pesquisas, importar e-mails, disparar convites e acompanhar resultados em tempo real.</p>
+      </div>
+      <p class="text-xs text-white/70">PulseCliente 2026</p>
+    </section>
+
+    <section class="flex items-center justify-center p-6 lg:p-12">
+      <div class="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-8 shadow-xl">
+        <div class="mb-8">
+          <h2 class="text-2xl font-extrabold">Entrar</h2>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Use suas credenciais para acessar o painel administrativo.</p>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-semibold mb-2">E-mail</label>
+            <input id="email" type="email" class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm" placeholder="admin@pulsecliente.local" required />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-semibold mb-2">Senha</label>
+            <input id="password" type="password" class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm" placeholder="********" required />
+          </div>
+
+          <p id="login-error" class="text-sm text-red-500 min-h-5"></p>
+
+          <button type="submit" class="w-full rounded-lg bg-primary hover:bg-primary/90 text-white font-bold py-3 transition-all shadow-lg shadow-primary/20">
+            Acessar painel
+          </button>
+        </form>
+
+        <div class="mt-6 rounded-lg bg-slate-100 dark:bg-slate-800 p-4 text-xs text-slate-600 dark:text-slate-300">
+          <p class="font-semibold mb-1">Acesso inicial</p>
+          <p>Usuario: admin@pulsecliente.local</p>
+          <p>Senha: admin123</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

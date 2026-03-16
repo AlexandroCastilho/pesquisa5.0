@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PulseCliente - Gestão de Pesquisas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+<script src="../../assets/app-api.js" defer></script>
+<script src="../../assets/pesquisas.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-background-dark flex-shrink-0">
+<div class="flex items-center gap-3 px-6 py-5">
+<div class="size-9 flex items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h1 class="text-base font-bold leading-none">PulseCliente</h1>
+</div>
+<nav class="flex-1 px-4 py-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold" href="pesquisas.html">
+<span class="material-symbols-outlined">poll</span>
+<span class="text-sm font-medium">Pesquisas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="editor-perguntas.html">
+<span class="material-symbols-outlined">edit_document</span>
+<span class="text-sm font-medium">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="usuarios.html">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Público</span>
+</a>
+<div class="flex-1"></div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="smtp.html">
+<span class="material-symbols-outlined">settings_ethernet</span>
+<span class="text-sm font-medium">Configurações SMTP</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-primary/20 flex items-center justify-between px-8 bg-white dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">edit_document</span>
+<h2 class="text-lg font-bold">Pesquisas</h2>
+</div>
+<div class="flex items-center gap-4">
+<a id="btn-new-survey" href="#" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Nova Pesquisa
+                    </a>
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-primary/20 border border-slate-300 dark:border-primary/30 overflow-hidden">
+<img alt="Avatar do Usuário" class="w-full h-full object-cover" data-alt="Ilustração do avatar do perfil do usuário" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8N5bg2vl8foKOGtph7C1J8eAi6fgftaWmqcemNWb0KdulhOGQ0TAOiVkdr1OxWYOmH-V6ATu6m2MhnKhb2t_uNEDezSvp9jAl2Z9PQgPUHSVSbKRNtSfF_XT8Zr3zI3d7qSb4k4EIBnhrPoqz0cZ_qg248lkq5GBcgMw-kSyCncY3ExB9OASAkmezkb6qAT-WatpsGKrJE5RlRKEfSSAILs0s8PaJIqh8aiOlyd0MpGNhsaZ4iW92hibIwApKNOH7zrVOAdkRPrGh"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 space-y-6">
+<!-- Search and Filters -->
+<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input id="search-survey" class="w-full pl-10 pr-4 py-2 bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm" placeholder="Buscar pesquisas por título..." type="text"/>
+</div>
+<div class="flex gap-2 w-full md:w-auto">
+<select id="filter-status" class="px-4 py-2 bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-lg text-sm font-medium">
+<option value="">Status: Todos</option>
+<option value="active">Ativa</option>
+<option value="draft">Rascunho</option>
+<option value="closed">Fechada</option>
+</select>
+<select id="sort-survey" class="px-4 py-2 bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-lg text-sm font-medium">
+<option value="recent">Ordenar: Recentes</option>
+<option value="oldest">Ordenar: Antigas</option>
+<option value="title">Ordenar: Título</option>
+</select>
+</div>
+</div>
+<!-- Grid List -->
+<div id="surveys-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Survey Card 1 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
+<div class="h-32 bg-gradient-to-br from-primary/20 to-primary/5 p-6 flex justify-between items-start">
+<span class="px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold rounded-full border border-green-500/20">Ativa</span>
+<div class="flex gap-1">
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Satisfação do Cliente 2024</h3>
+<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                    Criada: 12 Out, 2023
+                                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+                                    1.240 Respostas
+                                </div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
+                                    Ver Resultados
+                                </button>
+</div>
+</div>
+</div>
+<!-- Survey Card 2 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
+<div class="h-32 bg-gradient-to-br from-primary/10 to-blue-500/10 p-6 flex justify-between items-start">
+<span class="px-3 py-1 bg-slate-500/10 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-full border border-slate-500/20">Rascunho</span>
+<div class="flex gap-1">
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Engajamento de Colaboradores Q4</h3>
+<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                    Criada: 05 Nov, 2023
+                                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+                                    0 Respostas
+                                </div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
+                                    Continuar Editando
+                                </button>
+</div>
+</div>
+</div>
+<!-- Survey Card 3 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
+<div class="h-32 bg-gradient-to-br from-red-500/10 to-orange-500/10 p-6 flex justify-between items-start">
+<span class="px-3 py-1 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-bold rounded-full border border-red-500/20">Fechada</span>
+<div class="flex gap-1">
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Feedback Beta do Produto</h3>
+<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                    Criada: 15 Ago, 2023
+                                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+                                    4.892 Respostas
+                                </div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
+                                    Ver Relatório
+                                </button>
+</div>
+</div>
+</div>
+<!-- Survey Card 4 -->
+<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
+<div class="h-32 bg-gradient-to-br from-primary/20 to-purple-500/10 p-6 flex justify-between items-start">
+<span class="px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold rounded-full border border-green-500/20">Ativa</span>
+<div class="flex gap-1">
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Pesquisa Redesign do Site</h3>
+<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                    Criada: 01 Dez, 2023
+                                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+                                    320 Respostas
+                                </div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
+                                    Ver Resultados
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

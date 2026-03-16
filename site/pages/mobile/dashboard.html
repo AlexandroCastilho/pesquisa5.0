@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>PulseCliente Dashboard</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between p-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/20">
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight">PulseCliente</h1>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>Nova Pesquisa</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- Quick Stats Grid -->
+<div class="grid grid-cols-1 gap-4 p-4">
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-xl p-5 flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total de Respostas</span>
+<span class="bg-emerald-500/10 text-emerald-500 text-xs font-bold px-2 py-1 rounded-full">+12%</span>
+</div>
+<p class="text-3xl font-bold mt-1">1.284</p>
+<p class="text-xs text-slate-400 mt-2">v.s. mês anterior</p>
+</div>
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-xl p-5 flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">NPS Geral</span>
+<span class="bg-emerald-500/10 text-emerald-500 text-xs font-bold px-2 py-1 rounded-full">+5%</span>
+</div>
+<p class="text-3xl font-bold mt-1">72</p>
+<div class="flex gap-1 mt-3">
+<div class="h-1.5 flex-1 bg-red-500 rounded-full opacity-20"></div>
+<div class="h-1.5 flex-1 bg-yellow-500 rounded-full opacity-20"></div>
+<div class="h-1.5 flex-[3] bg-emerald-500 rounded-full"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-xl p-5 flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Taxa de Conclusão</span>
+<span class="bg-red-500/10 text-red-500 text-xs font-bold px-2 py-1 rounded-full">-2%</span>
+</div>
+<p class="text-3xl font-bold mt-1">85%</p>
+<p class="text-xs text-slate-400 mt-2">Meta: 90%</p>
+</div>
+</div>
+<!-- Chart Section -->
+<section class="px-4 py-2">
+<div class="bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-xl p-5">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="text-base font-bold">Tendência de Respostas</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">Últimos 7 dias</p>
+</div>
+<button class="text-primary text-xs font-semibold">Ver detalhes</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="relative h-40 w-full">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 150">
+<defs>
+<lineargradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#5048e5" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#5048e5" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,120 Q50,110 80,60 T160,80 T240,30 T320,70 T400,20 L400,150 L0,150 Z" fill="url(#gradient)"></path>
+<path d="M0,120 Q50,110 80,60 T160,80 T240,30 T320,70 T400,20" fill="none" stroke="#5048e5" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+<span>Seg</span>
+<span>Ter</span>
+<span>Qua</span>
+<span>Qui</span>
+<span>Sex</span>
+<span>Sab</span>
+<span>Dom</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activity -->
+<section class="p-4">
+<h3 class="text-base font-bold mb-4">Atividade Recente</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-3 bg-white dark:bg-primary/5 border border-slate-100 dark:border-primary/5 rounded-lg">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-lg">person</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold">Novo feedback recebido</p>
+<p class="text-xs text-slate-500 italic">"Ótimo atendimento na unidade Matriz..."</p>
+</div>
+<span class="text-[10px] text-slate-400">2m atrás</span>
+</div>
+<div class="flex items-center gap-4 p-3 bg-white dark:bg-primary/5 border border-slate-100 dark:border-primary/5 rounded-lg">
+<div class="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold">Pesquisa de Satisfação Q3</p>
+<p class="text-xs text-slate-500">Meta de 500 respostas atingida</p>
+</div>
+<span class="text-[10px] text-slate-400">1h atrás</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (Optional secondary, but top button is primary as requested) -->
+<button class="fixed right-6 bottom-24 size-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20 sm:hidden">
+<span class="material-symbols-outlined">chat</span>
+</button>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-t border-slate-200 dark:border-primary/20 px-2 pb-6 pt-2 z-30">
+<div class="max-w-md mx-auto flex justify-around">
+<a class="flex flex-col items-center gap-1 text-primary" href="dashboard.html">
+<span class="material-symbols-outlined text-[24px] fill-1">grid_view</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="pesquisas.html">
+<span class="material-symbols-outlined text-[24px]">assignment</span>
+<span class="text-[10px] font-bold">Pesquisas</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="text-[10px] font-bold">Relatórios</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-[10px] font-bold">Ajustes</span>
+</a>
+</div>
+</nav>
+</body></html>

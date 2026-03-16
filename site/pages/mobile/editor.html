@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Editor de Perguntas - PulseCliente</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#5048e5",
+              "background-light": "#f6f6f8",
+              "background-dark": "#121121",
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header Navigation -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between px-4 py-3">
+<a href="pesquisas.html" class="p-2 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">close</span>
+</a>
+<h1 class="text-lg font-bold tracking-tight">Editor de Pergunta</h1>
+<button class="px-4 py-2 bg-primary text-white rounded-lg font-semibold text-sm">Salvar</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto pb-32">
+<!-- Progress Bar Section -->
+<div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estrutura da Pesquisa</span>
+<span class="text-sm font-bold text-primary">3 de 10</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full w-[30%]"></div>
+</div>
+</div>
+<!-- Question Type Selector -->
+<div class="px-4 pt-6">
+<h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Tipo de Pergunta</h2>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl mb-1">checklist</span>
+<span class="text-[10px] font-bold uppercase">Múltipla</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-3xl mb-1">notes</span>
+<span class="text-[10px] font-bold uppercase">Texto</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-3xl mb-1">linear_scale</span>
+<span class="text-[10px] font-bold uppercase">Escala</span>
+</button>
+</div>
+</div>
+<!-- Question Text Editor -->
+<div class="p-4 mt-4">
+<label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Texto da Pergunta</label>
+<textarea class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none min-h-[120px]" placeholder="Ex: Como você avalia nosso atendimento?">Como você avalia sua experiência geral com nosso produto?</textarea>
+</div>
+<!-- Options Section -->
+<div class="px-4 mt-2">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Opções de Resposta</h2>
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                    Adicionar
+                </button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-slate-400 cursor-move">drag_indicator</span>
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-slate-900 dark:text-slate-100" type="text" value="Excelente"/>
+<button class="text-slate-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<div class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-slate-400 cursor-move">drag_indicator</span>
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-slate-900 dark:text-slate-100" type="text" value="Bom"/>
+<button class="text-slate-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<div class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-slate-400 cursor-move">drag_indicator</span>
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-slate-900 dark:text-slate-100" type="text" value="Regular"/>
+<button class="text-slate-400"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Settings Section -->
+<div class="p-4 mt-6">
+<h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Configurações</h2>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-slate-700 dark:text-slate-300">Resposta obrigatória</span>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto"></div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-700 dark:text-slate-300">Embaralhar opções</span>
+<div class="w-12 h-6 bg-slate-300 dark:bg-slate-700 rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe-area">
+<div class="flex justify-around items-center h-16 px-4">
+<a class="flex flex-col items-center gap-1 text-primary" href="editor.html">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="text-[10px] font-bold">Editor</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="pesquisas.html">
+<span class="material-symbols-outlined">visibility</span>
+<span class="text-[10px] font-bold">Prévia</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="text-[10px] font-bold">Fluxo</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Config</span>
+</a>
+</div>
+</nav>
+<!-- Simplified Structure Menu (Floating) -->
+<div class="fixed bottom-20 right-4">
+<button class="size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">list_alt</span>
+</button>
+</div>
+</body></html>

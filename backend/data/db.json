@@ -1,0 +1,75 @@
+{
+  "users": [
+    {
+      "id": "usr_0te9mtrk",
+      "name": "Administrador",
+      "email": "admin@pulsecliente.local",
+      "role": "owner",
+      "status": "active",
+      "passwordHash": "$2a$10$1D61nWcTpq18CrYxC9GtEON4wJ4OJ2m3rRUgAmqCTgAHaAw2740SG",
+      "createdAt": "2026-03-16T18:32:12.269Z",
+      "updatedAt": "2026-03-16T18:32:12.269Z"
+    },
+    {
+      "id": "usr_y7rzy61d",
+      "name": "Teste User",
+      "email": "teste.user@example.com",
+      "role": "member",
+      "status": "active",
+      "passwordHash": "$2a$10$HwxM1pHAyy.ZUWAkZd3x3eDgC1CfnnptlUF/V5RubJHb1BwM5Pxlq",
+      "createdAt": "2026-03-16T18:33:20.556Z",
+      "updatedAt": "2026-03-16T18:33:20.556Z"
+    }
+  ],
+  "smtp": {
+    "host": "smtp.exemplo.com",
+    "port": 587,
+    "security": "tls",
+    "username": "user",
+    "password": "secret",
+    "fromEmail": "no-reply@exemplo.com",
+    "updatedAt": "2026-03-16T18:33:28.194Z"
+  },
+  "surveys": [
+    {
+      "id": "srv_armvclq4",
+      "title": "Satisfacao inicial de onboarding",
+      "description": "Pesquisa modelo para validacao do sistema.",
+      "status": "draft",
+      "questions": [
+        {
+          "id": "qst_yew6h392",
+          "text": "Como voce avalia sua experiencia inicial?",
+          "type": "multiple_choice",
+          "required": true,
+          "randomizeOptions": false,
+          "options": [
+            "Excelente",
+            "Boa",
+            "Regular",
+            "Ruim"
+          ]
+        }
+      ],
+      "respondentEmails": [],
+      "createdBy": "usr_0te9mtrk",
+      "createdAt": "2026-03-16T18:32:12.269Z",
+      "updatedAt": "2026-03-16T18:32:12.269Z",
+      "launchedAt": null
+    },
+    {
+      "id": "srv_3ghui5x5",
+      "title": "Pesquisa API Teste",
+      "description": "",
+      "status": "draft",
+      "questions": [],
+      "respondentEmails": [],
+      "createdBy": "usr_0te9mtrk",
+      "createdAt": "2026-03-16T18:32:38.962Z",
+      "updatedAt": "2026-03-16T18:32:38.962Z",
+      "launchedAt": null
+    }
+  ],
+  "responses": [],
+  "emailLogs": []
+}

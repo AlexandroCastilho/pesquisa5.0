@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCliente - Site Completo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <main class="mx-auto max-w-6xl px-6 py-12">
+    <header class="mb-10">
+      <p class="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">Implementacao por etapas</p>
+      <h1 class="mt-4 text-4xl font-extrabold tracking-tight">PulseCliente</h1>
+      <p class="mt-3 max-w-2xl text-slate-300">Site completo gerado a partir da pasta Stitch, com rotas separadas para desktop e mobile.</p>
+    </header>
+
+    <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+      <h2 class="text-xl font-bold">Etapa 1: Base e Estrutura</h2>
+      <p class="mt-2 text-slate-300">Estrutura final publicada em <strong>site/pages</strong>, separando experiencias desktop e PWA mobile.</p>
+    </section>
+
+    <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+      <h2 class="text-xl font-bold">Etapa 2: Fluxo Desktop</h2>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-cyan-400/50 hover:bg-slate-800" href="pages/desktop/dashboard.html">Dashboard Principal</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-cyan-400/50 hover:bg-slate-800" href="pages/desktop/pesquisas.html">Gerenciador de Pesquisas</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-cyan-400/50 hover:bg-slate-800" href="pages/desktop/editor-perguntas.html">Editor de Perguntas</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-cyan-400/50 hover:bg-slate-800" href="pages/desktop/usuarios.html">Gerenciador de Usuarios</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-cyan-400/50 hover:bg-slate-800" href="pages/desktop/smtp.html">Configuracoes SMTP</a>
+      </div>
+    </section>
+
+    <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+      <h2 class="text-xl font-bold">Etapa 3: Fluxo Mobile PWA</h2>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-emerald-400/50 hover:bg-slate-800" href="pages/mobile/dashboard.html">Dashboard Mobile</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-emerald-400/50 hover:bg-slate-800" href="pages/mobile/pesquisas.html">Pesquisas Mobile</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-emerald-400/50 hover:bg-slate-800" href="pages/mobile/editor.html">Editor Mobile</a>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-slate-800 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 p-6">
+      <h2 class="text-xl font-bold">Etapa 5: Assets globais</h2>
+      <p class="mt-2 text-slate-300">Navegação flutuante (<code>site.css</code> + <code>site.js</code>) conectada em todas as telas desktop e mobile.</p>
+    </section>
+
+    <section class="mt-8 rounded-2xl border border-slate-800 bg-gradient-to-r from-violet-500/10 to-primary/10 p-6">
+      <h2 class="text-xl font-bold">Etapa 6: Navegação lateral padronizada</h2>
+      <p class="mt-2 text-slate-300">Sidebar idêntica em todas as 5 telas desktop &mdash; itens consistentes, ícones corretos e rota ativa destacada por página.</p>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-violet-400/50 hover:bg-slate-800" href="pages/desktop/dashboard.html">Dashboard</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-violet-400/50 hover:bg-slate-800" href="pages/desktop/pesquisas.html">Pesquisas</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-violet-400/50 hover:bg-slate-800" href="pages/desktop/editor-perguntas.html">Editor</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-violet-400/50 hover:bg-slate-800" href="pages/desktop/usuarios.html">Público</a>
+        <a class="rounded-xl border border-slate-700 bg-slate-900 p-4 hover:border-violet-400/50 hover:bg-slate-800" href="pages/desktop/smtp.html">Configurações SMTP</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PulseCliente - Gestor de Inquéritos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-4">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white">analytics</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">PulseCliente</h1>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-1 pb-24">
+<!-- Search and Filter Section -->
+<div class="p-4 space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary text-slate-900 dark:text-slate-100 placeholder:text-slate-500" placeholder="Pesquisar inquéritos..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">Todos</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">Ativos</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">Rascunhos</button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">Concluídos</button>
+</div>
+</div>
+<!-- Survey List -->
+<div class="px-4 space-y-4">
+<!-- Survey Card 1 -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Ativo</span>
+<button class="text-slate-400"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<h3 class="text-lg font-bold mb-1">Satisfação do Cliente Q3</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Criado em 15 Out 2023 • 248 Respostas</p>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 mb-6">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary text-white py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">bar_chart</span>
+                            Resultados
+                        </button>
+<a href="editor.html" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-sm">edit</span>
+                            Editar
+                        </a>
+</div>
+</div>
+</div>
+<!-- Survey Card 2 -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Rascunho</span>
+<button class="text-slate-400"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<h3 class="text-lg font-bold mb-1">Feedback de Novo Produto</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Criado em 02 Nov 2023 • 0 Respostas</p>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 mb-6">
+<div class="bg-slate-400 h-1.5 rounded-full" style="width: 10%"></div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary/10 dark:bg-primary/20 text-primary py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+                            Publicar
+                        </button>
+<a href="editor.html" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700">
+<span class="material-symbols-outlined text-sm">edit</span>
+                            Editar
+                        </a>
+</div>
+</div>
+</div>
+<!-- Survey Card 3 -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Concluído</span>
+<button class="text-slate-400"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<h3 class="text-lg font-bold mb-1">Experiência de Checkout</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-4">Finalizado em 20 Set 2023 • 1,204 Respostas</p>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 mb-6">
+<div class="bg-slate-500 h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+<div class="flex gap-2">
+<button class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">analytics</span>
+                            Relatório Completo
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 bg-primary text-white size-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-6 pt-2 px-6 flex justify-between items-center z-20">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="dashboard.html">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium">Início</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="pesquisas.html">
+<span class="material-symbols-outlined filled-icon">assignment</span>
+<span class="text-[10px] font-medium">Inquéritos</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-[10px] font-medium">Relatórios</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Perfil</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Ajustes</span>
+</a>
+</nav>
+</body></html>

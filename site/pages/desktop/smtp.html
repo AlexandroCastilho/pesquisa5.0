@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Configurações SMTP - PulseCliente</title>
+<link rel="stylesheet" href="../../assets/site.css" />
+<script src="../../assets/site.js" defer></script>
+<script src="../../assets/app-api.js" defer></script>
+<script src="../../assets/smtp.js" defer></script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-background-dark flex-shrink-0">
+<div class="flex items-center gap-3 px-6 py-5">
+<div class="size-9 flex items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h1 class="text-base font-bold leading-none">PulseCliente</h1>
+</div>
+<nav class="flex-1 px-4 py-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="pesquisas.html">
+<span class="material-symbols-outlined">poll</span>
+<span class="text-sm font-medium">Pesquisas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="editor-perguntas.html">
+<span class="material-symbols-outlined">edit_document</span>
+<span class="text-sm font-medium">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-primary/5 hover:text-primary transition-colors" href="usuarios.html">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Público</span>
+</a>
+<div class="flex-1"></div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold" href="smtp.html">
+<span class="material-symbols-outlined">settings_ethernet</span>
+<span class="text-sm font-medium">Configurações SMTP</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto">
+<!-- Header -->
+<header class="flex h-16 items-center justify-between border-b border-slate-200 bg-white/50 px-8 backdrop-blur-md dark:border-slate-800 dark:bg-background-dark/50">
+<h1 class="text-lg font-semibold">Configuração SMTP</h1>
+<div class="flex items-center gap-4">
+<button class="flex size-10 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+</button>
+<button class="flex size-10 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">dark_mode</span>
+</button>
+</div>
+</header>
+<div class="mx-auto max-w-4xl p-8">
+<!-- Status Card -->
+<div class="mb-8 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-6 dark:bg-emerald-500/10">
+<div class="flex items-center gap-4">
+<div class="flex size-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400">Conexão Saudável</h3>
+<p class="text-sm text-emerald-700/70 dark:text-emerald-300/60">Seu servidor SMTP está atualmente acessível e respondendo corretamente.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-semibold uppercase tracking-wider text-emerald-600/50 dark:text-emerald-400/50">Último Teste</p>
+<p class="text-sm font-medium">há 2 minutos</p>
+</div>
+</div>
+<!-- Configuration Form -->
+<div class="rounded-xl border border-slate-200 bg-white p-8 dark:border-slate-800 dark:bg-slate-900/50">
+<div class="mb-8">
+<h2 class="text-xl font-bold">Detalhes do Servidor</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400">Configure as definições do seu servidor de e-mail de saída para o motor de entrega PulseCliente.</p>
+</div>
+<form id="smtp-form" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+<!-- SMTP Host -->
+<div class="md:col-span-2">
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Host SMTP</label>
+<input name="host" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="smtp.provedor.com" type="text" value="smtp.sendgrid.net"/>
+</div>
+<!-- Port -->
+<div>
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Porta</label>
+<input name="port" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="587" type="number" value="587"/>
+</div>
+<!-- Secure -->
+<div>
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Segurança (SSL/TLS)</label>
+<select name="security" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+<option value="tls">STARTTLS</option>
+<option value="ssl">SSL/TLS</option>
+<option value="none">Nenhuma</option>
+</select>
+</div>
+<!-- Username -->
+<div>
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Nome de Usuário</label>
+<input name="username" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="api_key" type="text" value="apikey"/>
+</div>
+<!-- Password -->
+<div>
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Senha</label>
+<div class="relative">
+<input name="password" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="••••••••••••" type="password" value=""/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+</div>
+<!-- From Email -->
+<div class="md:col-span-2">
+<label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Endereço de E-mail de Origem</label>
+<input name="fromEmail" class="w-full rounded-lg border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" placeholder="ola@empresa.com" type="email" value="marketing@pulsecliente.io"/>
+<p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Este e-mail aparecerá no campo 'De' de suas campanhas.</p>
+</div>
+<!-- Action Buttons -->
+<div class="mt-4 flex flex-col gap-3 md:col-span-2 md:flex-row md:justify-end">
+<button id="btn-test-smtp" class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-6 py-3 text-sm font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" type="button">
+<span class="material-symbols-outlined text-xl">network_check</span>
+                            Testar Conexão
+                        </button>
+<button class="flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90" type="submit">
+<span class="material-symbols-outlined text-xl">save</span>
+                            Salvar Configurações
+                        </button>
+</div>
+</form>
+</div>
+<!-- Help Section -->
+<div class="mt-8 rounded-xl bg-primary/5 p-6 dark:bg-primary/10">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<div>
+<h4 class="font-semibold text-primary">Precisa de ajuda com o SMTP?</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">A porta comum para TLS é 587, e para SSL é 465. Se você estiver usando SendGrid, Amazon SES ou Mailgun, consulte nossos <a class="text-primary underline" href="#">guias de integração</a> para credenciais específicas.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
