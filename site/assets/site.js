@@ -1,22 +1,45 @@
 (function () {
-  var THEME_KEY = 'pc_theme';
+  var THEME_MODE_KEY = 'pc_theme_mode';
+  var LEGACY_THEME_KEY = 'pc_theme';
+  var systemThemeMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  var themeMode = null;
 
-  function getPreferredTheme() {
-    var stored = localStorage.getItem(THEME_KEY);
-    if (stored === 'light' || stored === 'dark') {
-      return stored;
+  function readStoredThemeMode() {
+    var mode = localStorage.getItem(THEME_MODE_KEY);
+    if (mode === 'system' || mode === 'light' || mode === 'dark') {
+      return mode;
     }
 
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var legacy = localStorage.getItem(LEGACY_THEME_KEY);
+    if (legacy === 'light' || legacy === 'dark') {
+      return legacy;
+    }
+
+    return 'system';
   }
 
-  function applyTheme(theme) {
-    var isDark = theme === 'dark';
-    document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+  function resolveTheme(mode) {
+    if (mode === 'light' || mode === 'dark') {
+      return mode;
+    }
 
-    var themeLabel = isDark ? 'Modo Escuro' : 'Modo Claro';
-    var themeIcon = isDark ? 'dark_mode' : 'light_mode';
+    if (systemThemeMedia && systemThemeMedia.matches) {
+      return 'dark';
+    }
+
+    return 'light';
+  }
+
+  function paintThemeControls(resolvedTheme) {
+    var isDark = resolvedTheme === 'dark';
+    var labelByMode = {
+      light: 'Modo Claro',
+      dark: 'Modo Escuro',
+      system: 'Modo Automático'
+    };
+
+    var themeIcon = themeMode === 'system' ? 'contrast' : (isDark ? 'dark_mode' : 'light_mode');
+    var themeLabel = labelByMode[themeMode] || 'Tema';
 
     document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
       btn.setAttribute('aria-label', themeLabel);
@@ -26,14 +49,44 @@
       if (iconEl) {
         iconEl.textContent = themeIcon;
       } else {
-        btn.textContent = isDark ? 'Escuro' : 'Claro';
+        btn.textContent = themeLabel;
+      }
+    });
+
+    document.querySelectorAll('[data-theme-mode-select]').forEach(function (selectEl) {
+      if (selectEl.value !== themeMode) {
+        selectEl.value = themeMode;
       }
     });
   }
 
+  function applyTheme(mode, persist) {
+    var shouldPersist = persist !== false;
+    themeMode = mode;
+
+    var resolvedTheme = resolveTheme(mode);
+    var isDark = resolvedTheme === 'dark';
+
+    document.documentElement.classList.toggle('dark', isDark);
+
+    if (shouldPersist) {
+      localStorage.setItem(THEME_MODE_KEY, themeMode);
+      localStorage.setItem(LEGACY_THEME_KEY, resolvedTheme);
+    }
+
+    paintThemeControls(resolvedTheme);
+  }
+
+  function setThemeMode(mode) {
+    if (mode !== 'system' && mode !== 'light' && mode !== 'dark') {
+      return;
+    }
+    applyTheme(mode, true);
+  }
+
   function toggleTheme() {
-    var isDark = document.documentElement.classList.contains('dark');
-    applyTheme(isDark ? 'light' : 'dark');
+    var resolvedCurrent = resolveTheme(themeMode || 'system');
+    setThemeMode(resolvedCurrent === 'dark' ? 'light' : 'dark');
   }
 
   function setupThemeToggleButtons() {
@@ -47,9 +100,36 @@
         toggleTheme();
       });
     });
+
+    document.querySelectorAll('[data-theme-mode-select]').forEach(function (selectEl) {
+      if (selectEl.dataset.themeBound === '1') {
+        return;
+      }
+
+      selectEl.dataset.themeBound = '1';
+      selectEl.addEventListener('change', function (event) {
+        setThemeMode(event.target.value);
+      });
+    });
   }
 
-  applyTheme(getPreferredTheme());
+  applyTheme(readStoredThemeMode(), false);
+
+  if (systemThemeMedia) {
+    systemThemeMedia.addEventListener('change', function () {
+      if (themeMode === 'system') {
+        applyTheme('system', false);
+      }
+    });
+  }
+
+  window.PC_THEME = {
+    getMode: function () {
+      return themeMode;
+    },
+    setMode: setThemeMode,
+    toggle: toggleTheme
+  };
 
   var host = window.location.hostname;
   var port = window.location.port;
@@ -115,7 +195,7 @@
     if (pageName === 'login.html') {
       document.body.prepend(shell);
       setupThemeToggleButtons();
-      applyTheme(getPreferredTheme());
+      applyTheme(themeMode || 'system', false);
       return;
     }
 
@@ -149,5 +229,5 @@
   document.body.prepend(shell);
 
   setupThemeToggleButtons();
-  applyTheme(getPreferredTheme());
+  applyTheme(themeMode || 'system', false);
 })();
