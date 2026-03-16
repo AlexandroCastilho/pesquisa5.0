@@ -3,6 +3,11 @@
     return;
   }
 
+  var Dialog = window.PC_DIALOG || {
+    alert: function (msg) { window.alert(msg); return Promise.resolve(); },
+    prompt: function (msg, def) { return Promise.resolve(window.prompt(msg, def || "")); }
+  };
+
   var url = new URL(window.location.href);
   var surveyId = url.searchParams.get("surveyId");
 
@@ -51,9 +56,9 @@
             questions: questions
           })
         });
-        alert("Pesquisa salva.");
+        await Dialog.alert("Pesquisa salva.", "Editor");
       } catch (err) {
-        alert("Erro ao salvar: " + err.message);
+        await Dialog.alert("Erro ao salvar: " + err.message, "Erro");
       }
     });
 
@@ -62,13 +67,13 @@
         method: "PUT",
         body: JSON.stringify({ status: "closed" })
       });
-      alert("Pesquisa encerrada.");
+      await Dialog.alert("Pesquisa encerrada.", "Editor");
     });
   }
 
   async function bootstrap() {
     if (!surveyId) {
-      var title = prompt("Titulo da pesquisa para iniciar:", "Nova pesquisa");
+      var title = await Dialog.prompt("Título da pesquisa para iniciar:", "Nova pesquisa", "Nova pesquisa");
       if (!title) {
         title = "Nova pesquisa";
       }

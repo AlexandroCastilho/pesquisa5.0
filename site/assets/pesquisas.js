@@ -3,6 +3,12 @@
     return;
   }
 
+  var Dialog = window.PC_DIALOG || {
+    alert: function (msg) { window.alert(msg); return Promise.resolve(); },
+    confirm: function (msg) { return Promise.resolve(window.confirm(msg)); },
+    prompt: function (msg, def) { return Promise.resolve(window.prompt(msg, def || "")); }
+  };
+
   var state = {
     search: "",
     status: "",
@@ -30,6 +36,10 @@
     try {
       var data = await window.PC_API.request("/surveys?" + params.toString());
       var grid = document.getElementById("surveys-grid");
+      if (!data.surveys.length) {
+        grid.innerHTML = "<div class='col-span-full rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark p-8 text-center text-slate-500 dark:text-slate-400'>Nenhuma pesquisa encontrada.</div>";
+        return;
+      }
       grid.innerHTML = data.surveys.map(function (survey) {
         return "<div class='bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group'>" +
           "<div class='h-20 bg-gradient-to-br from-primary/20 to-primary/5 p-4 flex justify-between items-start'>" +
@@ -53,12 +63,12 @@
         "</div>";
       }).join("");
     } catch (err) {
-      alert(err.message);
+      await Dialog.alert(err.message, "Erro");
     }
   }
 
   async function createSurvey() {
-    var title = prompt("Titulo da nova pesquisa:");
+    var title = await Dialog.prompt("Título da nova pesquisa:", "", "Nova pesquisa");
     if (!title) return;
 
     await window.PC_API.request("/surveys", {
@@ -69,28 +79,29 @@
   }
 
   async function importEmails(surveyId) {
-    var text = prompt("Cole e-mails separados por virgula ou linha:");
+    var text = await Dialog.prompt("Cole e-mails separados por vírgula ou linha:", "", "Importar e-mails");
     if (!text) return;
 
     await window.PC_API.request("/surveys/" + surveyId + "/respondents/import", {
       method: "POST",
       body: JSON.stringify({ emails: text })
     });
-    alert("E-mails importados com sucesso.");
+    await Dialog.alert("E-mails importados com sucesso.", "Importação");
   }
 
   async function launchSurvey(surveyId) {
     try {
       var result = await window.PC_API.request("/surveys/" + surveyId + "/launch", { method: "POST" });
-      alert("Disparo concluido. Enviados: " + result.sent + ", falhas: " + result.failed);
+      await Dialog.alert("Disparo concluído. Enviados: " + result.sent + ", falhas: " + result.failed, "Lançamento");
       await loadSurveys();
     } catch (err) {
-      alert(err.message);
+      await Dialog.alert(err.message, "Erro");
     }
   }
 
   async function removeSurvey(surveyId) {
-    if (!confirm("Excluir pesquisa?")) return;
+    var shouldDelete = await Dialog.confirm("Excluir pesquisa?", "Confirmação");
+    if (!shouldDelete) return;
     await window.PC_API.request("/surveys/" + surveyId, { method: "DELETE" });
     await loadSurveys();
   }
@@ -136,5 +147,6 @@
   }
 
   bindEvents();
+  document.getElementById("surveys-grid").innerHTML = "<div class='col-span-full rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark p-8 text-center text-slate-500 dark:text-slate-400'>Carregando pesquisas...</div>";
   loadSurveys();
 })();

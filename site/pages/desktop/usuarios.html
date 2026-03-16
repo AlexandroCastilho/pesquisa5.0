@@ -33,6 +33,7 @@
 <link rel="stylesheet" href="../../assets/site.css" />
 <script src="../../assets/site.js" defer></script>
 <script src="../../assets/app-api.js" defer></script>
+<script src="../../assets/dialog.js" defer></script>
 <script src="../../assets/usuarios.js" defer></script>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
@@ -112,99 +113,15 @@
 </tr>
 </thead>
 <tbody id="users-tbody" class="divide-y divide-slate-100 dark:divide-primary/10">
-<!-- Row 1 -->
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">
-<div class="flex items-center gap-3">
-<div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">AR</div>
-<span class="font-medium">Alex Rivera</span>
-</div>
-</td>
-<td class="px-6 py-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">alex@pulse.com</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                            Proprietário
-                                        </span>
-</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500">
-<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                                            Ativo
-                                        </span>
-</td>
-<td class="px-6 py-4 text-right whitespace-nowrap">
-<button class="text-slate-400 hover:text-primary transition-colors p-1">
-<span class="material-symbols-outlined text-xl">edit</span>
-</button>
-<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-2">
-<span class="material-symbols-outlined text-xl">delete</span>
-</button>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">
-<div class="flex items-center gap-3">
-<div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xs">SC</div>
-<span class="font-medium">Sarah Chen</span>
-</div>
-</td>
-<td class="px-6 py-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">sarah@pulse.com</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                                            Admin
-                                        </span>
-</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-500">
-<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                                            Ativo
-                                        </span>
-</td>
-<td class="px-6 py-4 text-right whitespace-nowrap">
-<button class="text-slate-400 hover:text-primary transition-colors p-1">
-<span class="material-symbols-outlined text-xl">edit</span>
-</button>
-<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-2">
-<span class="material-symbols-outlined text-xl">delete</span>
-</button>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
-<td class="px-6 py-4 whitespace-nowrap">
-<div class="flex items-center gap-3">
-<div class="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 font-bold text-xs">JS</div>
-<span class="font-medium">Jordan Smyth</span>
-</div>
-</td>
-<td class="px-6 py-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">jordan@pulse.com</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                                            Membro
-                                        </span>
-</td>
-<td class="px-6 py-4 whitespace-nowrap">
-<span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
-<span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
-                                            Inativo
-                                        </span>
-</td>
-<td class="px-6 py-4 text-right whitespace-nowrap">
-<button class="text-slate-400 hover:text-primary transition-colors p-1">
-<span class="material-symbols-outlined text-xl">edit</span>
-</button>
-<button class="text-slate-400 hover:text-red-500 transition-colors p-1 ml-2">
-<span class="material-symbols-outlined text-xl">delete</span>
-</button>
-</td>
+<tr>
+<td class="px-6 py-8 text-sm text-slate-500 dark:text-slate-400" colspan="5">Carregando usuários...</td>
 </tr>
 </tbody>
 </table>
 </div>
 <!-- Pagination Footer -->
 <div class="px-6 py-4 bg-slate-50 dark:bg-primary/5 border-t border-slate-200 dark:border-primary/20 flex items-center justify-between">
-<span class="text-xs text-slate-500 dark:text-slate-400">Exibindo 3 de 12 membros da equipe</span>
+<span id="users-summary" class="text-xs text-slate-500 dark:text-slate-400">Carregando equipe...</span>
 <div class="flex gap-2">
 <button class="p-1 rounded border border-slate-200 dark:border-primary/20 text-slate-500 disabled:opacity-50" disabled="">
 <span class="material-symbols-outlined">chevron_left</span>

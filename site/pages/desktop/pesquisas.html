@@ -36,6 +36,7 @@
 <link rel="stylesheet" href="../../assets/site.css" />
 <script src="../../assets/site.js" defer></script>
 <script src="../../assets/app-api.js" defer></script>
+<script src="../../assets/dialog.js" defer></script>
 <script src="../../assets/pesquisas.js" defer></script>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
@@ -114,134 +115,8 @@
 </div>
 <!-- Grid List -->
 <div id="surveys-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-<!-- Survey Card 1 -->
-<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
-<div class="h-32 bg-gradient-to-br from-primary/20 to-primary/5 p-6 flex justify-between items-start">
-<span class="px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold rounded-full border border-green-500/20">Ativa</span>
-<div class="flex gap-1">
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</div>
-<div class="p-6">
-<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Satisfação do Cliente 2024</h3>
-<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                    Criada: 12 Out, 2023
-                                </div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">bar_chart</span>
-                                    1.240 Respostas
-                                </div>
-</div>
-<div class="mt-6">
-<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
-                                    Ver Resultados
-                                </button>
-</div>
-</div>
-</div>
-<!-- Survey Card 2 -->
-<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
-<div class="h-32 bg-gradient-to-br from-primary/10 to-blue-500/10 p-6 flex justify-between items-start">
-<span class="px-3 py-1 bg-slate-500/10 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-full border border-slate-500/20">Rascunho</span>
-<div class="flex gap-1">
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</div>
-<div class="p-6">
-<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Engajamento de Colaboradores Q4</h3>
-<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                    Criada: 05 Nov, 2023
-                                </div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">bar_chart</span>
-                                    0 Respostas
-                                </div>
-</div>
-<div class="mt-6">
-<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
-                                    Continuar Editando
-                                </button>
-</div>
-</div>
-</div>
-<!-- Survey Card 3 -->
-<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
-<div class="h-32 bg-gradient-to-br from-red-500/10 to-orange-500/10 p-6 flex justify-between items-start">
-<span class="px-3 py-1 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-bold rounded-full border border-red-500/20">Fechada</span>
-<div class="flex gap-1">
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</div>
-<div class="p-6">
-<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Feedback Beta do Produto</h3>
-<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                    Criada: 15 Ago, 2023
-                                </div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">bar_chart</span>
-                                    4.892 Respostas
-                                </div>
-</div>
-<div class="mt-6">
-<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
-                                    Ver Relatório
-                                </button>
-</div>
-</div>
-</div>
-<!-- Survey Card 4 -->
-<div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all group">
-<div class="h-32 bg-gradient-to-br from-primary/20 to-purple-500/10 p-6 flex justify-between items-start">
-<span class="px-3 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold rounded-full border border-green-500/20">Ativa</span>
-<div class="flex gap-1">
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-</button>
-<button class="p-2 bg-white/80 dark:bg-background-dark/80 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]">delete</span>
-</button>
-</div>
-</div>
-<div class="p-6">
-<h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Pesquisa Redesign do Site</h3>
-<div class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                    Criada: 01 Dez, 2023
-                                </div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">bar_chart</span>
-                                    320 Respostas
-                                </div>
-</div>
-<div class="mt-6">
-<button class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white py-2 rounded-lg text-sm font-bold transition-all">
-                                    Ver Resultados
-                                </button>
-</div>
-</div>
-</div>
+<div class="col-span-full rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark p-8 text-center text-slate-500 dark:text-slate-400">
+Carregando pesquisas...
 </div>
 </div>
 </main>

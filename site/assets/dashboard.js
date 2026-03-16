@@ -12,16 +12,23 @@
   async function loadDashboard() {
     try {
       var data = await window.PC_API.request("/dashboard");
-      var statEls = document.querySelectorAll(".grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 h3");
-      if (statEls.length >= 4) {
-        statEls[0].textContent = String(data.stats.activeSurveys);
-        statEls[1].textContent = String(data.stats.finishedSurveys);
-        statEls[2].textContent = String(data.stats.draftSurveys);
-        statEls[3].textContent = data.stats.responseRate + "%";
-      }
+      var statActive = document.getElementById("stat-active-surveys");
+      var statFinished = document.getElementById("stat-finished-surveys");
+      var statDraft = document.getElementById("stat-draft-surveys");
+      var statRate = document.getElementById("stat-response-rate");
 
-      var tbody = document.querySelector("table tbody");
+      if (statActive) statActive.textContent = String(data.stats.activeSurveys);
+      if (statFinished) statFinished.textContent = String(data.stats.finishedSurveys);
+      if (statDraft) statDraft.textContent = String(data.stats.draftSurveys);
+      if (statRate) statRate.textContent = data.stats.responseRate + "%";
+
+      var tbody = document.getElementById("dashboard-recent-surveys");
       if (tbody) {
+        if (!data.recentSurveys.length) {
+          tbody.innerHTML = "<tr><td class='px-6 py-8 text-sm text-slate-500 dark:text-slate-400' colspan='4'>Nenhuma pesquisa recente encontrada.</td></tr>";
+          return;
+        }
+
         tbody.innerHTML = data.recentSurveys.map(function (survey) {
           return "<tr class='hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors'>" +
             "<td class='px-6 py-4'><div class='flex items-center gap-3'><div class='w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary'><span class='material-symbols-outlined text-sm'>poll</span></div><span class='font-medium'>" + survey.title + "</span></div></td>" +
@@ -34,6 +41,11 @@
     } catch (err) {
       console.error(err);
     }
+  }
+
+  var tbody = document.getElementById("dashboard-recent-surveys");
+  if (tbody) {
+    tbody.innerHTML = "<tr><td class='px-6 py-8 text-sm text-slate-500 dark:text-slate-400' colspan='4'>Carregando pesquisas recentes...</td></tr>";
   }
 
   loadDashboard();

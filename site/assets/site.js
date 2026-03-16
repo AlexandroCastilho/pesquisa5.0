@@ -1,4 +1,56 @@
 (function () {
+  var THEME_KEY = 'pc_theme';
+
+  function getPreferredTheme() {
+    var stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'light' || stored === 'dark') {
+      return stored;
+    }
+
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    var isDark = theme === 'dark';
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+
+    var themeLabel = isDark ? 'Modo Escuro' : 'Modo Claro';
+    var themeIcon = isDark ? 'dark_mode' : 'light_mode';
+
+    document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+      btn.setAttribute('aria-label', themeLabel);
+      btn.setAttribute('title', themeLabel);
+
+      var iconEl = btn.querySelector('[data-theme-icon]');
+      if (iconEl) {
+        iconEl.textContent = themeIcon;
+      } else {
+        btn.textContent = isDark ? 'Escuro' : 'Claro';
+      }
+    });
+  }
+
+  function toggleTheme() {
+    var isDark = document.documentElement.classList.contains('dark');
+    applyTheme(isDark ? 'light' : 'dark');
+  }
+
+  function setupThemeToggleButtons() {
+    document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+      if (btn.dataset.themeBound === '1') {
+        return;
+      }
+
+      btn.dataset.themeBound = '1';
+      btn.addEventListener('click', function () {
+        toggleTheme();
+      });
+    });
+  }
+
+  applyTheme(getPreferredTheme());
+
   var host = window.location.hostname;
   var port = window.location.port;
   var path = window.location.pathname;
@@ -44,13 +96,26 @@
     return a;
   }
 
+  function makeThemeButton() {
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'pc-shell-theme';
+    button.setAttribute('data-theme-toggle', '1');
+    button.innerHTML = "<span class='material-symbols-outlined' data-theme-icon>dark_mode</span>";
+    return button;
+  }
+
   var homeHref = isDesktop ? (token ? 'dashboard.html' : 'login.html') : '../desktop/login.html';
 
   shell.appendChild(makeLink('Inicio', homeHref, false));
 
   if (isDesktop) {
+    shell.appendChild(makeThemeButton());
+
     if (pageName === 'login.html') {
       document.body.prepend(shell);
+      setupThemeToggleButtons();
+      applyTheme(getPreferredTheme());
       return;
     }
 
@@ -71,6 +136,7 @@
     });
     shell.appendChild(logout);
   } else {
+    shell.appendChild(makeThemeButton());
     shell.appendChild(makeLink('Mobile', 'dashboard.html', pageName === 'dashboard.html'));
     shell.appendChild(makeLink('Pesquisas', 'pesquisas.html', pageName === 'pesquisas.html'));
     shell.appendChild(makeLink('Editor', 'editor.html', pageName === 'editor.html'));
@@ -81,4 +147,7 @@
 
   document.body.prepend(spacer);
   document.body.prepend(shell);
+
+  setupThemeToggleButtons();
+  applyTheme(getPreferredTheme());
 })();

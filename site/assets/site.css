@@ -59,6 +59,105 @@
   background: rgba(239, 68, 68, 0.35);
 }
 
+.pc-shell .pc-shell-theme {
+  border: 0;
+  background: rgba(80, 72, 229, 0.22);
+  color: #c7d2fe;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-shell .pc-shell-theme:hover {
+  background: rgba(80, 72, 229, 0.38);
+}
+
+.pc-shell .pc-shell-theme .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.pc-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.64);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.pc-dialog-backdrop.pc-dialog-open {
+  display: flex;
+}
+
+.pc-dialog {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 14px;
+  border: 1px solid rgba(80, 72, 229, 0.35);
+  background: #090c22;
+  color: #e2e8f0;
+  padding: 18px;
+  box-shadow: 0 28px 60px rgba(2, 6, 23, 0.55);
+}
+
+.pc-dialog-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.pc-dialog-message {
+  font-size: 14px;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.pc-dialog-input {
+  width: 100%;
+  margin-top: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+  background: #17213b;
+  color: #f8fafc;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.pc-dialog-input:focus {
+  border-color: #5048e5;
+  box-shadow: 0 0 0 3px rgba(80, 72, 229, 0.22);
+}
+
+.pc-dialog-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pc-dialog-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pc-dialog-btn-secondary {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.pc-dialog-btn-primary {
+  background: #5048e5;
+  color: #ffffff;
+}
+
 .pc-shell-spacer {
   height: 58px;
 }

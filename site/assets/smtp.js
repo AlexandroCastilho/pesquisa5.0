@@ -3,6 +3,10 @@
     return;
   }
 
+  var Dialog = window.PC_DIALOG || {
+    alert: function (msg) { window.alert(msg); return Promise.resolve(); }
+  };
+
   var form = document.getElementById("smtp-form");
   if (!form) return;
 
@@ -35,19 +39,19 @@
         method: "PUT",
         body: JSON.stringify(payload)
       });
-      alert("Configuracoes SMTP salvas.");
+      await Dialog.alert("Configurações SMTP salvas.", "SMTP");
       form.password.value = "";
     } catch (err) {
-      alert(err.message);
+      await Dialog.alert(err.message, "Erro");
     }
   });
 
   document.getElementById("btn-test-smtp").addEventListener("click", async function () {
     try {
       await window.PC_API.request("/smtp/test", { method: "POST" });
-      alert("Conexao SMTP validada com sucesso.");
+      await Dialog.alert("Conexão SMTP validada com sucesso.", "SMTP");
     } catch (err) {
-      alert(err.message);
+      await Dialog.alert(err.message, "Erro");
     }
   });
 
